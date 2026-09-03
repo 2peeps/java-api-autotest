@@ -1,9 +1,9 @@
 package qa.dmitriy.base;
 
+import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
 import qa.dmitriy.client.PostsClient;
-
-import static io.restassured.RestAssured.baseURI;
+import qa.dmitriy.config.RestAssuredConfig;
 
 public abstract class BaseApiTest {
 
@@ -11,6 +11,7 @@ public abstract class BaseApiTest {
 
     @BeforeAll
     static void setUp() {
-        baseURI = "https://jsonplaceholder.typicode.com";
+        RestAssured.requestSpecification =
+                RestAssuredConfig.defaultSpecification();
     }
 }
