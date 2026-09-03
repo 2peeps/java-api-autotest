@@ -2,18 +2,18 @@ package qa.dmitriy.api;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
-import qa.dmitriy.config.TestConfig;
+import qa.dmitriy.base.BaseApiTest;
+import qa.dmitriy.client.PostsClient;
 
-import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class PostsApiTest {
+class PostsApiTest extends BaseApiTest {
+
+    private final PostsClient postsClient = new PostsClient();
 
     @Test
     void shouldGetPostById() {
-        Response response = given()
-                .when()
-                .get(TestConfig.baseUrl() + "/posts/1");
+        Response response = postsClient.getPostById(1);
 
         assertThat(response.statusCode())
                 .isEqualTo(200);
