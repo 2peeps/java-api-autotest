@@ -3,25 +3,34 @@ package qa.dmitriy.api;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import qa.dmitriy.base.BaseApiTest;
-import qa.dmitriy.client.PostsClient;
+import qa.dmitriy.model.PostResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PostsApiTest extends BaseApiTest {
 
-    private final PostsClient postsClient = new PostsClient();
+    @Test
+void shouldGetPostById() {
+    PostResponse post = postsClient.getPostById(1);
+
+    assertThat(post.id())
+            .isEqualTo(1);
+
+    assertThat(post.userId())
+            .isEqualTo(1);
+
+    assertThat(post.title())
+            .isNotBlank();
+
+    assertThat(post.body())
+            .isNotBlank();
+}
 
     @Test
-    void shouldGetPostById() {
-        Response response = postsClient.getPostById(1);
+    void shouldReturnNotFoundForNonExistingPost() {
+        Response response = postsClient.getPostByIdResponse(999);
 
         assertThat(response.statusCode())
-                .isEqualTo(200);
-
-        assertThat(response.jsonPath().getInt("id"))
-                .isEqualTo(1);
-
-        assertThat(response.jsonPath().getInt("userId"))
-                .isEqualTo(1);
+                .isEqualTo(404);
     }
 }
