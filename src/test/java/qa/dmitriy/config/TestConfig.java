@@ -12,6 +12,12 @@ public final class TestConfig {
     }
 
     public static String baseUrl() {
+        String baseUrl = System.getProperty("base.url");
+
+        if (baseUrl != null && !baseUrl.isBlank()) {
+            return baseUrl;
+        }
+
         return PROPERTIES.getProperty("base.url");
     }
 
