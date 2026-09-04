@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import qa.dmitriy.base.BaseApiTest;
+import qa.dmitriy.data.PostTestData;
 import qa.dmitriy.model.PostResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +32,9 @@ class PostsApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnNotFoundForNonExistingPost() {
-        Response response = postsClient.getPostByIdResponse(999);
+        Response response = postsClient.getPostByIdResponse(
+                PostTestData.NON_EXISTING_POST_ID
+        );
 
         assertThat(response.statusCode())
                 .isEqualTo(404);
