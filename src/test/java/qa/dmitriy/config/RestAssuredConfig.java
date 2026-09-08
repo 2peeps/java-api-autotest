@@ -10,7 +10,6 @@ public final class RestAssuredConfig {
 
     public static RequestSpecification defaultSpecification() {
         return new RequestSpecBuilder()
-                .setBaseUri(TestConfig.baseUrl())
                 .setContentType("application/json")
                 .build();
     }

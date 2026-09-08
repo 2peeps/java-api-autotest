@@ -6,3 +6,4 @@ target/
 # OS
 .DS_Store
 Thumbs.db
+src/test/resources/application-local.properties

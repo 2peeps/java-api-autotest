@@ -11,35 +11,89 @@ public final class TestConfig {
     private TestConfig() {
     }
 
-    public static String baseUrl() {
-        String baseUrl = System.getProperty("base.url");
+    public static String postsBaseUrl() {
+        return getRequiredProperty("posts.base.url");
+    }
 
-        if (baseUrl != null && !baseUrl.isBlank()) {
-            return baseUrl;
+    public static String walletBaseUrl() {
+        return getRequiredProperty("wallet.base.url");
+    }
+
+    public static String testIin() {
+        return getRequiredProperty("test.iin");
+    }
+
+    public static String testPhone() {
+        return getRequiredProperty("test.phone");
+    }
+
+    public static String authUrl() {
+        return getRequiredProperty("auth.url");
+    }
+
+    public static String authClientId() {
+        return getRequiredProperty("auth.client-id");
+    }
+
+    public static String authUsername() {
+        return getRequiredEnvironmentVariable("KEYCLOAK_USERNAME");
+    }
+
+    public static String authPassword() {
+        return getRequiredEnvironmentVariable("KEYCLOAK_PASSWORD");
+    }
+
+    public static String authClientSecret() {
+        return getRequiredEnvironmentVariable("KEYCLOAK_CLIENT_SECRET");
+    }
+
+    private static String getRequiredProperty(String key) {
+        String value = PROPERTIES.getProperty(key);
+
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(
+                    "Property is not configured: " + key
+            );
         }
 
-        return PROPERTIES.getProperty("base.url");
+        return value;
+    }
+
+    private static String getRequiredEnvironmentVariable(String key) {
+        String value = System.getenv(key);
+
+        if (value == null || value.isBlank()) {
+            throw new IllegalStateException(
+                    "Environment variable is not configured: " + key
+            );
+        }
+
+        return value;
     }
 
     private static Properties loadProperties() {
         Properties properties = new Properties();
 
+        loadInto(properties, "application.properties");
+        loadInto(properties, "application-local.properties");
+
+        return properties;
+    }
+
+    private static void loadInto(Properties properties, String fileName) {
         try (InputStream inputStream = TestConfig.class
                 .getClassLoader()
-                .getResourceAsStream("application.properties")) {
+                .getResourceAsStream(fileName)) {
 
             if (inputStream == null) {
-                throw new IllegalStateException(
-                        "application.properties not found"
-                );
+                return;
             }
 
             properties.load(inputStream);
-            return properties;
 
         } catch (IOException e) {
             throw new IllegalStateException(
-                    "Failed to load application.properties",
+                    "Failed to load " + fileName,
                     e
             );
         }
