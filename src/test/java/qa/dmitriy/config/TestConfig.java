@@ -43,6 +43,10 @@ public final class TestConfig {
         return getRequiredEnvironmentVariable("KEYCLOAK_PASSWORD");
     }
 
+    public static String paymentStatementsBaseUrl() {
+        return getRequiredProperty("payment-statements.base.url");
+    }
+
     public static String authClientSecret() {
         return getRequiredEnvironmentVariable("KEYCLOAK_CLIENT_SECRET");
     }
