@@ -23,16 +23,16 @@ class MockPaymentStatementsTest extends BaseApiTest {
         assertThat(response.statusCode())
                 .isEqualTo(200);
 
-        assertThat(response.jsonPath().getString("statementId"))
+        assertThat(response.jsonPath().getString("statement_id"))
                 .isEqualTo(statementId);
 
         assertThat(response.jsonPath().getString("status"))
                 .isEqualTo("ACCEPTED");
 
-        assertThat(response.jsonPath().getInt("requestedCount"))
+        assertThat(response.jsonPath().getInt("requested_count"))
                 .isPositive();
 
-        assertThat(response.jsonPath().getString("createdAt"))
+        assertThat(response.jsonPath().getString("created_at"))
                 .isNotBlank();
     }
 
@@ -70,16 +70,42 @@ class MockPaymentStatementsTest extends BaseApiTest {
         assertThat(response.statusCode())
                 .isEqualTo(200);
 
-        assertThat(response.jsonPath().getString("statementId"))
+        assertThat(response.jsonPath().getString("statement_id"))
                 .isEqualTo(statementId);
 
         assertThat(response.jsonPath().getString("status"))
                 .isEqualTo("CANCELED");
 
-        assertThat(response.jsonPath().getInt("canceledItemsCount"))
+        assertThat(response.jsonPath().getInt("canceled_items_count"))
                 .isPositive();
 
-        assertThat(response.jsonPath().getString("canceledAt"))
+        assertThat(response.jsonPath().getString("canceled_at"))
+                .isNotBlank();
+    }
+
+    @Test
+    void shouldReturnFullPaymentStatementMock() {
+        String statementId = "AUTO-SZ208-FULL-001";
+
+        Response response = mockPaymentStatementsClient.getFullResult(statementId);
+
+        assertThat(response.statusCode())
+                .isEqualTo(200);
+
+        assertThat(response.asString())
+                .isNotBlank();
+    }
+
+    @Test
+    void shouldReturnPaymentStatementStatusMock() {
+        String statementId = "AUTO-SZ208-GET-STATUS-001";
+
+        Response response = mockPaymentStatementsClient.getStatus(statementId);
+
+        assertThat(response.statusCode())
+                .isEqualTo(200);
+
+        assertThat(response.asString())
                 .isNotBlank();
     }
 }

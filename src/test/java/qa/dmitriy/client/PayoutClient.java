@@ -135,6 +135,34 @@ public class PayoutClient {
                 .get(PAYOUT_EXPORT_ENDPOINT);
     }
 
+    public Response searchPayouts(
+            String iin,
+            String phone,
+            String status,
+            int page,
+            int size) {
+        RequestSpecification request =
+                payoutRequest()
+                        .queryParam("page", page)
+                        .queryParam("size", size);
+
+        if (iin != null && !iin.isBlank()) {
+            request.queryParam("iin", iin);
+        }
+
+        if (phone != null && !phone.isBlank()) {
+            request.queryParam("phone", phone);
+        }
+
+        if(status != null && !status.isBlank()) {
+            request.queryParam("statuses", status);
+        }
+
+        return request
+                .when()
+                .get("/api/wallet/payout/search");
+    }
+
     private RequestSpecification payoutRequest() {
         return given()
                 .spec(RestAssuredConfig.defaultSpecification())

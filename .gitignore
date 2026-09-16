@@ -7,3 +7,8 @@ target/
 .DS_Store
 Thumbs.db
 src/test/resources/application-local.properties
+
+# Local integration tests with direc DEV datebase access
+src/test/java/qa/dmitriy/api/WalletCardTransferSchedulerTest.java
+.allure/
+allure-results/

@@ -35,4 +35,22 @@ public class MockPaymentStatementsClient {
                 .when()
                 .post("/api/mock/payment-statements/{statementId}/cancel");
     }
+
+    public Response getFullResult(String statementId) {
+        return given()
+                .spec(RestAssuredConfig.defaultSpecification())
+                .baseUri(TestConfig.paymentStatementsBaseUrl())
+                .pathParam("statementId", statementId)
+                .when()
+                .get("/api/mock/payment-statements/{statementId}");
+    }
+
+    public Response getStatus(String statementId) {
+        return given()
+                .spec(RestAssuredConfig.defaultSpecification())
+                .baseUri(TestConfig.paymentStatementsBaseUrl())
+                .pathParam("statementId", statementId)
+                .when()
+                .get("/api/mock/payment-statements/{statementId}/status");
+    }
 }

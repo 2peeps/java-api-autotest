@@ -51,6 +51,22 @@ public final class TestConfig {
         return getRequiredEnvironmentVariable("KEYCLOAK_CLIENT_SECRET");
     }
 
+    public static String externalSystemClientId() {
+        return getRequiredEnvironmentVariable("EXTERNAL_SYSTEM_CLIENT_ID");
+    }
+
+    public static String externalSystemClientSecret() {
+        return getRequiredEnvironmentVariable("EXTERNAL_SYSTEM_CLIENT_SECRET");
+    }
+
+    public static String adminEmail() {
+        return getRequiredEnvironmentVariable("ADMIN_EMAIL");
+    }
+
+    public static String adminPassword() {
+        return getRequiredEnvironmentVariable("ADMIN_PASSWORD");
+    }
+
     private static String getRequiredProperty(String key) {
         String value = PROPERTIES.getProperty(key);
 
