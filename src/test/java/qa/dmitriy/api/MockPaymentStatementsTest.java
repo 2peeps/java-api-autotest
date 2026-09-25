@@ -21,18 +21,18 @@ class MockPaymentStatementsTest extends BaseApiTest {
         );
 
         assertThat(response.statusCode())
-                .isEqualTo(200);
+                .isEqualTo(202);
 
-        assertThat(response.jsonPath().getString("statement_id"))
+        assertThat(response.jsonPath().getString("statementId"))
                 .isEqualTo(statementId);
 
         assertThat(response.jsonPath().getString("status"))
                 .isEqualTo("ACCEPTED");
 
-        assertThat(response.jsonPath().getInt("requested_count"))
+        assertThat(response.jsonPath().getInt("requestedCount"))
                 .isPositive();
 
-        assertThat(response.jsonPath().getString("created_at"))
+        assertThat(response.jsonPath().getString("createdAt"))
                 .isNotBlank();
     }
 
@@ -70,16 +70,16 @@ class MockPaymentStatementsTest extends BaseApiTest {
         assertThat(response.statusCode())
                 .isEqualTo(200);
 
-        assertThat(response.jsonPath().getString("statement_id"))
+        assertThat(response.jsonPath().getString("statementId"))
                 .isEqualTo(statementId);
 
         assertThat(response.jsonPath().getString("status"))
                 .isEqualTo("CANCELED");
 
-        assertThat(response.jsonPath().getInt("canceled_items_count"))
+        assertThat(response.jsonPath().getInt("canceledItemsCount"))
                 .isPositive();
 
-        assertThat(response.jsonPath().getString("canceled_at"))
+        assertThat(response.jsonPath().getString("canceledAt"))
                 .isNotBlank();
     }
 

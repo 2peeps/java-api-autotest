@@ -13,7 +13,11 @@ public class PayoutClient {
     private static final String PAYOUT_EXPORT_ENDPOINT =
             "/api/wallet/payout/export";
 
-    private final TokenProvider tokenProvider = new TokenProvider();
+    private static final String PAYOUT_SEARCH_ENDPOINT =
+            "/api/wallet/payout/search";
+
+    private final TokenProvider tokenProvider =
+            new TokenProvider();
 
     public Response exportPayouts() {
         return payoutRequest()
@@ -135,16 +139,49 @@ public class PayoutClient {
                 .get(PAYOUT_EXPORT_ENDPOINT);
     }
 
+    /**
+     * Existing method kept for compatibility
+     * with existing fixtures and tests.
+     */
     public Response searchPayouts(
             String iin,
             String phone,
             String status,
             int page,
             int size) {
+
+        return searchPayouts(
+                iin,
+                phone,
+                status,
+                null,
+                null,
+                null,
+                page,
+                size,
+                "createdAt,DESC"
+        );
+    }
+
+    /**
+     * Extended search method with all supported filters.
+     */
+    public Response searchPayouts(
+            String iin,
+            String phone,
+            String status,
+            String processedAt,
+            String createdDateFrom,
+            String createdDateTo,
+            int page,
+            int size,
+            String sort) {
+
         RequestSpecification request =
                 payoutRequest()
                         .queryParam("page", page)
-                        .queryParam("size", size);
+                        .queryParam("size", size)
+                        .queryParam("sort", sort);
 
         if (iin != null && !iin.isBlank()) {
             request.queryParam("iin", iin);
@@ -154,13 +191,25 @@ public class PayoutClient {
             request.queryParam("phone", phone);
         }
 
-        if(status != null && !status.isBlank()) {
+        if (status != null && !status.isBlank()) {
             request.queryParam("statuses", status);
+        }
+
+        if (processedAt != null && !processedAt.isBlank()) {
+            request.queryParam("processedAt", processedAt);
+        }
+
+        if (createdDateFrom != null && !createdDateFrom.isBlank()) {
+            request.queryParam("createdDateFrom", createdDateFrom);
+        }
+
+        if (createdDateTo != null && !createdDateTo.isBlank()) {
+            request.queryParam("createdDateTo", createdDateTo);
         }
 
         return request
                 .when()
-                .get("/api/wallet/payout/search");
+                .get(PAYOUT_SEARCH_ENDPOINT);
     }
 
     private RequestSpecification payoutRequest() {

@@ -2,8 +2,14 @@ package qa.dmitriy.api;
 
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import qa.dmitriy.client.CompanyClient;
 import qa.dmitriy.model.CompanyRequest;
+import java.util.Comparator;
+
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -163,5 +169,285 @@ class CompanyApiTest {
                 "Тестовое SMS",
                 "Тестовое завершение"
         );
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidCompanyRequests")
+    void shouldRejectCompanyWithMissingRequiredField(
+        String requestBody) {
+
+    Response response =
+            companyClient.createCompany(requestBody);
+
+    assertThat(response.statusCode())
+            .isEqualTo(400);
+    }
+
+    static Stream<Arguments> invalidCompanyRequests() {
+    return Stream.of(
+            Arguments.of("""
+                    {
+                      "bin": "123456789012",
+                      "avr_sms_text": "Тестовое SMS",
+                      "avr_sms_text_finishing": "Тестовое завершение"
+                    }
+                    """),
+
+            Arguments.of("""
+                    {
+                      "name": "Autotest Company",
+                      "avr_sms_text": "Тестовое SMS",
+                      "avr_sms_text_finishing": "Тестовое завершение"
+                    }
+                    """),
+
+            Arguments.of("""
+                    {
+                      "name": "Autotest Company",
+                      "bin": "123456789012",
+                      "avr_sms_text_finishing": "Тестовое завершение"
+                    }
+                    """),
+
+            Arguments.of("""
+                    {
+                      "name": "Autotest Company",
+                      "bin": "123456789012",
+                      "avr_sms_text": "Тестовое SMS"
+                    }
+                    """)
+    );
+    }
+
+    @Test
+    void shouldRejectCompanyWithDuplicateBin() {
+
+    Response companiesResponse =
+            companyClient.getCompanies(0, 1);
+
+    assertThat(companiesResponse.statusCode())
+            .isEqualTo(200);
+
+    String existingBin =
+            companiesResponse.jsonPath()
+                    .getString("content[0].bin");
+
+    assertThat(existingBin)
+            .isNotBlank();
+
+    CompanyRequest request =
+            new CompanyRequest(
+                    "Autotest Duplicate Company",
+                    existingBin,
+                    null, null, null, null, null, null, null, null,
+                    null, null, null, null, null, null, null, null,
+                    "Тестовое SMS",
+                    "Тестовое завершение"
+            );
+
+    Response response =
+            companyClient.createCompany(request);
+
+    assertThat(response.statusCode())
+            .isEqualTo(400);
+    }
+
+    @Test
+    void shouldUpdateCompany() {
+
+    Response companiesResponse =
+            companyClient.getCompanies(0, 1);
+
+    assertThat(companiesResponse.statusCode())
+            .isEqualTo(200);
+
+    Long companyId =
+            companiesResponse.jsonPath()
+                    .getLong("content[0].id");
+
+    String existingBin =
+            companiesResponse.jsonPath()
+                    .getString("content[0].bin");
+
+    assertThat(companyId)
+            .isNotNull();
+
+    assertThat(existingBin)
+            .isNotBlank();
+
+    CompanyRequest request =
+            new CompanyRequest(
+                    "Autotest Updated Company",
+                    existingBin,
+                    "LEGAL_ENTITY",
+                    "CASHLESS",
+                    1,
+                    "TEST",
+                    "123456789012",
+                    "Test Buyer",
+                    "12345678901234567890",
+                    "17",
+                    "12345678901",
+                    "Test Bank",
+                    100000.0,
+                    "TEST",
+                    "Test position",
+                    "Test FIO",
+                    "TEST-001",
+                    "Test contract",
+                    "Обновленное SMS",
+                    "Обновленное завершение"
+            );
+
+    Response response =
+            companyClient.updateCompany(companyId, request);
+
+    assertThat(response.statusCode())
+            .isEqualTo(200);
+
+    Response updatedCompaniesResponse =
+            companyClient.getCompanies(0, 10);
+
+    assertThat(updatedCompaniesResponse.statusCode())
+            .isEqualTo(200);
+
+    String updatedName =
+            updatedCompaniesResponse.jsonPath()
+                    .getString(
+                        "content.find { it.id == " + companyId + " }.name"
+                    );
+
+    assertThat(updatedName)
+            .isEqualTo("Autotest Updated Company");
+    }
+
+    @Test
+    void shouldRejectUpdateForNonExistingCompany() {
+
+    long nonExistingCompanyId = 999999999L;
+
+    CompanyRequest request =
+            new CompanyRequest(
+                    "Autotest Company",
+                    "123456789012",
+                    "LEGAL_ENTITY",
+                    "CASHLESS",
+                    1,
+                    "TEST",
+                    "123456789012",
+                    "Test Buyer",
+                    "12345678901234567890",
+                    "17",
+                    "12345678901",
+                    "Test Bank",
+                    100000.0,
+                    "TEST",
+                    "Test position",
+                    "Test FIO",
+                    "TEST-001",
+                    "Test contract",
+                    "Тестовое SMS",
+                    "Тестовое завершение"
+            );
+
+    Response response =
+            companyClient.updateCompany(
+                    nonExistingCompanyId,
+                    request
+            );
+
+    assertThat(response.statusCode())
+            .isIn(400, 404);
+    }
+
+    @Test
+    void shouldFilterCompaniesById() {
+
+    Response companiesResponse =
+            companyClient.getCompanies(0, 1);
+
+    assertThat(companiesResponse.statusCode())
+            .isEqualTo(200);
+
+    Long companyId =
+            companiesResponse.jsonPath()
+                    .getLong("content[0].id");
+
+    assertThat(companyId)
+            .isNotNull();
+
+    Response filteredResponse =
+            companyClient.getCompaniesById(companyId);
+
+    assertThat(filteredResponse.statusCode())
+            .isEqualTo(200);
+
+    assertThat(filteredResponse.jsonPath().getList("content"))
+            .isNotNull();
+
+    assertThat(
+            filteredResponse.jsonPath()
+                    .getList("content.id", Long.class)
+    )
+            .containsOnly(companyId);
+    }
+
+    @Test
+    void shouldHandleNegativePage() {
+
+        Response response =
+                companyClient.getCompanies(-1, 10);
+
+        assertThat(response.statusCode())
+                .isEqualTo(200);
+    }
+
+    @Test
+    void shouldSortCompaniesByNameAscending() {
+
+    Response response =
+            companyClient.getCompaniesSorted(
+                    0,
+                    10,
+                    "name,ASC"
+            );
+
+    assertThat(response.statusCode())
+            .isEqualTo(200);
+
+    var names =
+            response.jsonPath()
+                    .getList("content.name", String.class);
+
+    assertThat(names)
+            .isNotNull();
+
+    assertThat(names)
+            .isSortedAccordingTo(String::compareToIgnoreCase);
+    }
+
+    @Test
+    void shouldSortCompaniesByNameDescending() {
+
+        Response response =
+                companyClient.getCompaniesSorted(
+                        0,
+                        10,
+                        "name,DESC"
+                );
+        assertThat(response.statusCode())
+                .isEqualTo(200);
+
+        var names =
+                response.jsonPath()
+                        .getList("content.name", String.class);
+
+        assertThat(names)
+                .isNotNull();
+
+        assertThat(names)
+                .isSortedAccordingTo(
+                        Comparator.reverseOrder()
+                );
     }
 }

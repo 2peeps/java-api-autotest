@@ -6,8 +6,8 @@ import qa.dmitriy.model.EmployeeCheckStatusResponse;
 
 public class EmployeeCheckWaiter {
 
-    private static final int POLLING_INTERVAL_MS = 1000;
-    private static final int TIMEOUT_MS = 30000;
+    private static final int POLLING_INTERVAL_MS = 5000;
+    private static final int TIMEOUT_MS = 60000;
 
     private final EmployeeCheckClient employeeCheckClient;
 

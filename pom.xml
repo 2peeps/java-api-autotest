@@ -103,6 +103,7 @@
                 <configuration>
                     <excludes>
                         <exclude>**/WalletCardTransferSchedulerTest.java</exclude>
+                        <exclude>**/PaymentStatementRateLimitTest.java</exclude>
                     </excludes>
 
                     <argLine>

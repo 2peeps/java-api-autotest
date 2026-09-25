@@ -6,6 +6,7 @@ import qa.dmitriy.config.RestAssuredConfig;
 import qa.dmitriy.config.TestConfig;
 import qa.dmitriy.model.CompanyRequest;
 
+
 import static io.restassured.RestAssured.given;
 
 public class CompanyClient {
@@ -83,4 +84,68 @@ public class CompanyClient {
                 .when()
                 .post(COMPANIES_ENDPOINT);
     }
+
+    public Response createCompany(String requestBody) {
+
+        return given()
+                .spec(RestAssuredConfig.defaultSpecification())
+                .baseUri(TestConfig.walletBaseUrl())
+                .header(
+                        "Authorization",
+                        "Bearer " + tokenProvider.getAccessToken()
+                )
+                .contentType("application/json")
+                .body(requestBody)
+                .when()
+                .post(COMPANIES_ENDPOINT);
+    }
+
+    public Response updateCompany(
+            long id,
+            CompanyRequest request) {
+
+        return given()
+                .spec(RestAssuredConfig.defaultSpecification())
+                .baseUri(TestConfig.walletBaseUrl())
+                .header(
+                        "Authorization",
+                        "Bearer " + tokenProvider.getAccessToken()
+                )
+                .contentType("application/json")
+                .body(request)
+                .when()
+                .put(COMPANIES_ENDPOINT + "/" + id);
+    }
+
+    public Response getCompaniesById(long id) {
+
+        return given()
+                .spec(RestAssuredConfig.defaultSpecification())
+                .baseUri(TestConfig.walletBaseUrl())
+                .header(
+                        "Authorization",
+                        "Bearer " + tokenProvider.getAccessToken()
+                )
+                .queryParam("ids", id)
+                .when()
+                .get(COMPANIES_ENDPOINT);
+    }
+
+    public Response getCompaniesSorted(
+            int page,
+            int size,
+            String sort) {
+
+        return given()
+                .spec(RestAssuredConfig.defaultSpecification())
+                .baseUri(TestConfig.walletBaseUrl())
+                .header(
+                        "Authorization",
+                        "Bearer " + tokenProvider.getAccessToken()
+                )
+                .queryParam("page", page)
+                .queryParam("size", size)
+                .queryParam("sort", sort)
+                .when()
+                .get(COMPANIES_ENDPOINT);}
 }

@@ -49,4 +49,32 @@ mvn clean test
 mvn "-Dtest=WalletCardTransferSchedulerTest" test
 ```
 
+## PaymentStatementRateLimitTest
+
+Файл:
+`src/test/java/qa/dmitriy/api/PaymentStatementRateLimitTest.java`
+
+Назначение:
+Проверяет ограничение количества запросов для ECOM API по настройкам rate limit.
+
+Что проверяет:
+- `/api/payment-statements/{statementId}/status` — 30 запросов проходят, 31-й получает `429`;
+- `/api/payment-statements/{statementId}` — 30 запросов проходят, 31-й получает `429`;
+- `/api/payment-statements/{statementId}/items/statuses` — 30 запросов проходят, 31-й получает `429`.
+
+Особенности:
+- лимит для проверяемых endpoints — 30 запросов;
+- окно ограничения — 60 секунд;
+- тесты используют отдельную авторизацию ECOM;
+- перед каждым тестом выполняется ожидание окончания предыдущего окна rate limit;
+- тесты намеренно создают нагрузку на rate limit и поэтому не входят в обычный `mvn clean test`.
+
+Когда запускать:
+Только при необходимости отдельно проверить настройки rate limit для ECOM API.
+
+Запуск:
+
+```powershell
+mvn "-Dtest=PaymentStatementRateLimitTest" test
+```
 Другие локальные интеграционные тесты добавляются в этот файл по мере появления, с указанием назначения, условий запуска и команды.

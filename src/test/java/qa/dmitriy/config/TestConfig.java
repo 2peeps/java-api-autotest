@@ -27,6 +27,10 @@ public final class TestConfig {
         return getRequiredProperty("test.phone");
     }
 
+    public static String testOtp() {
+        return getRequiredProperty("test.otp");
+    }
+
     public static String authUrl() {
         return getRequiredProperty("auth.url");
     }
@@ -65,6 +69,45 @@ public final class TestConfig {
 
     public static String adminPassword() {
         return getRequiredEnvironmentVariable("ADMIN_PASSWORD");
+    }
+
+    public static String rewardPaymentTestIin() {
+        return getRequiredProperty("reward-payment.test.iin");
+    }
+
+    public static String rewardPaymentTestPhone() {
+        return getRequiredProperty("reward-payment.test.phone");
+    }
+
+    public static String adminArConsultEmail() {
+        return getRequiredEnvironmentVariable("ADMIN_AR_CONSULT_EMAIL");
+    }
+
+    public static String adminArConsultPassword() {
+        return getRequiredEnvironmentVariable("ADMIN_AR_CONSULT_PASSWORD");
+    }
+
+    public static String adminSmartStaffEmail() {
+        return getRequiredEnvironmentVariable("ADMIN_SMART_STAFF_EMAIL");
+    }
+
+    public static String adminSmartStaffPassword() {
+        return getRequiredEnvironmentVariable("ADMIN_SMART_STAFF_PASSWORD");}
+
+    public static String adminWalletOnlyEmail () {
+        return getRequiredEnvironmentVariable("ADMIN_WALLET_ONLY_EMAIL");
+    }
+
+    public static String adminWalletOnlyPassword() {
+        return getRequiredEnvironmentVariable("ADMIN_WALLET_ONLY_PASSWORD");
+    }
+
+    public static String adminNoRolesEmail() {
+        return getRequiredEnvironmentVariable("ADMIN_NO_ROLES_EMAIL");
+    }
+
+    public static String adminNoRolesPassword() {
+        return getRequiredEnvironmentVariable("ADMIN_NO_ROLES_PASSWORD");
     }
 
     private static String getRequiredProperty(String key) {
