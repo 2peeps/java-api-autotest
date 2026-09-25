@@ -175,7 +175,6 @@ The public demo API tests can be executed without access to the private environm
 ## 📊 Test Execution
 
 The current test suite contains:
-**37 tests · 0 failures · 0 errors**
 
 ```text
 Tests run: 36
